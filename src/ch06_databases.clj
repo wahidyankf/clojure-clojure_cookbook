@@ -1,16 +1,14 @@
 (ns ch06-databases
-  (:require [clojure.java.jdbc :as jdbc]
-            [java-jdbc.ddl :as ddl]
-            [java-jdbc.sql :as sql]))
+  (:require [next.jdbc :as jdbc]))
 
-(def db-spec {:classname "org.postgresql.Driver"
-              :subprotocol "postgresql"
-              :subname "//localhost:5432/postgresql"
-              :user "postgres"
-              :password "mysecretpassword"})
+(def ds {:dbtype "postgres"
+         :dbname "postgres" :user "postgres" :password "mysecretpassword"})
 
-(jdbc/db-do-commands db-spec false
-                     (ddl/create-table
-                      :tags
-                      [:id :serial "PRIMARY KEY"]
-                      [:name :varchar "NOT NULL"]))
+(jdbc/execute! ds ["
+create table address (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(32),
+  email VARCHAR(255)
+)"])
+
+(jdbc/execute-one! ds ["select * from accounts"])
